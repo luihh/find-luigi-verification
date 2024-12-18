@@ -1,48 +1,66 @@
-# Astro Starter Kit: Basics
+# Find Luigi Verification
 
-```sh
-npm create astro@latest -- --template basics
+This project implements a verification system for a Discord bot. Users must find Luigi in the minigame based on the Wanted! minigame from SM64DS and NSMBDS. Upon successful verification, the bot updates their roles.
+
+![Screenshot of the website](/public/screenshot.png)
+
+# Setup
+
+1. **Clone the Repository**
+
+```bash
+git clone https://github.com/luihh/find-luigi-verification.git
+cd find-luigi-verification
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+2. **Install Dependencies**
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+pnpm install
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+3. **Set Up Environment Variables**
 
-## 🧞 Commands
+```env
+DISCORD_BOT_TOKEN=your-bot-token-here
+DISCORD_GUILD_ID=your-guild-id-here
+NOT_VERIFIED_ROLE_ID=role-id-for-not-verified
+VERIFIED_ROLE_ID=role-id-for-verified
+```
 
-All commands are run from the root of the project, from a terminal:
+4. **Start the Development Server**
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```bash
+pnpm dev
+```
 
-## 👀 Want to learn more?
+# API
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+`POST /api/verify`
+
+- This endpoint verifies users by removing the "not verified" role and adding the "verified" role to the user who visits the verification link.
+- **Request body:**
+
+```json
+{
+  "userId": "discord-user-id"
+}
+```
+
+- **Response:**
+  - **200 OK:** User successfully verified, roles updated.
+  - **400 Bad Request:** Missing `userId` in the request.
+  - **401 Unauthorized:** Invalid bot token or insufficient permissions.
+  - **500 Internal Server Error:** Other errors (e.g., failed API request).
+
+# Frontend (Game)
+
+The frontend is built using Astro and includes the Find Luigi minigame.
+
+- **Game Setup:** 50 characters are randomly placed within a container. One of them is Luigi. When the user clicks Luigi, the bot verifies them and updates their roles.
+- **Cookies:** After a successful verification, a cookie is set to prevent further attempts at verification within the session.
+- **User ID:** The `userId` is passed as a query parameter in the link (e.g., `?userId=123456789012345678`) to identify the user for the role assignment.
+
+# License
+
+This project is licensed under the MIT License - see the [LICENSE](/LICENSE) file for details.
