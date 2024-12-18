@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from '../layouts/Layout.astro';
 
 export const prerender = true;
 ---
@@ -18,7 +18,7 @@ export const prerender = true;
 
   #game-container {
     position: relative;
-    width: 40vw;
+    width: 50vw;
     height: 60vh;
     border: 2px solid #fff;
     overflow: hidden;
@@ -59,12 +59,12 @@ export const prerender = true;
   const params = Object.fromEntries(urlSearchParams.entries());
   const userId = params.userId;
 
-  const isVerified = document.cookie.includes("isVerified=true");
+  const isVerified = document.cookie.includes('isVerified=true');
 
   const gameContainer = document.getElementById(
-    "game-container",
+    'game-container',
   ) as HTMLElement;
-  const message = document.getElementById("message") as HTMLElement;
+  const message = document.getElementById('message') as HTMLElement;
 
   // Character configurations
   interface Character {
@@ -73,36 +73,36 @@ export const prerender = true;
   }
 
   const characters: Character[] = [
-    { name: "Mario", image: "mario.png" },
-    { name: "Yoshi", image: "yoshi.png" },
-    { name: "Wario", image: "wario.png" },
+    { name: 'Mario', image: 'mario.png' },
+    { name: 'Yoshi', image: 'yoshi.png' },
+    { name: 'Wario', image: 'wario.png' },
   ];
 
   const characterCount: number = 50;
 
   async function sendVerification(userId: string) {
-    const response = await fetch("/api/verify", {
-      method: "POST",
+    const response = await fetch('/api/verify', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ userId }),
     });
 
     if (response.ok) {
-      document.cookie = "isVerified=true; path=/; max-age=3600";
+      document.cookie = 'isVerified=true; path=/; max-age=3600';
 
       message.textContent =
-        "Verification successful! You can return to Discord.";
-      message.style.backgroundColor = "limegreen";
+        'Verification successful! You can return to Discord.';
+      message.style.backgroundColor = 'limegreen';
     } else {
-      message.textContent = "Verification failed. Please try again.";
-      message.style.backgroundColor = "red";
+      message.textContent = 'Verification failed. Please try again.';
+      message.style.backgroundColor = 'red';
     }
   }
 
   function getRandomPosition(): { x: number; y: number } {
-    const x = Math.random() * (gameContainer.clientWidth - 40);
+    const x = Math.random() * (gameContainer.clientWidth - 50);
     const y = Math.random() * (gameContainer.clientHeight - 60);
     return { x, y };
   }
@@ -112,8 +112,8 @@ export const prerender = true;
     image: string,
     isLuigi: boolean,
   ): HTMLElement {
-    const charDiv = document.createElement("div");
-    charDiv.className = "character";
+    const charDiv = document.createElement('div');
+    charDiv.className = 'character';
     charDiv.style.backgroundImage = `url(${image})`;
     const { x, y } = getRandomPosition();
     charDiv.style.left = `${x}px`;
@@ -127,13 +127,13 @@ export const prerender = true;
     charDiv.dataset.direction = JSON.stringify(direction);
 
     function onLuigiFound() {
-      message.textContent = "You found Luigi!";
-      message.style.backgroundColor = "limegreen";
+      message.textContent = 'You found Luigi!';
+      message.style.backgroundColor = 'limegreen';
 
-      const audio = new Audio("ooh.wav");
+      const audio = new Audio('ooh.wav');
       audio.play();
 
-      charDiv.removeEventListener("click", onLuigiFound);
+      charDiv.removeEventListener('click', onLuigiFound);
 
       if (userId && !isVerified) {
         sendVerification(userId);
@@ -143,16 +143,16 @@ export const prerender = true;
     }
 
     if (isLuigi) {
-      charDiv.dataset.speed = "1"; // Luigi moves slower
-      charDiv.addEventListener("click", onLuigiFound);
+      charDiv.dataset.speed = '1'; // Luigi moves slower
+      charDiv.addEventListener('click', onLuigiFound);
     } else {
       charDiv.dataset.speed = (Math.random() * 2 + 1).toString(); // Random speed for other characters
-      charDiv.addEventListener("click", () => {
-        message.textContent = "Wrong character! Keep looking!";
-        message.style.backgroundColor = "red";
+      charDiv.addEventListener('click', () => {
+        message.textContent = 'Wrong character! Keep looking!';
+        message.style.backgroundColor = 'red';
         setTimeout(() => {
-          message.textContent = "Find Luigi!";
-          message.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+          message.textContent = 'Find Luigi!';
+          message.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
         }, 1000);
       });
     }
@@ -161,11 +161,11 @@ export const prerender = true;
   }
 
   function moveCharacters(): void {
-    const characters = document.querySelectorAll(".character");
+    const characters = document.querySelectorAll('.character');
     characters.forEach((charEl: Element) => {
       const char = charEl as HTMLElement;
-      const speed = parseFloat(char.dataset.speed ?? "1");
-      const direction = JSON.parse(char.dataset.direction ?? "{}");
+      const speed = parseFloat(char.dataset.speed ?? '1');
+      const direction = JSON.parse(char.dataset.direction ?? '{}');
 
       let x = parseFloat(char.style.left);
       let y = parseFloat(char.style.top);
@@ -174,7 +174,7 @@ export const prerender = true;
       y += direction.dy * speed;
 
       // Check for collisions with container bounds
-      if (x <= 0 || x >= gameContainer.clientWidth - 40) {
+      if (x <= 0 || x >= gameContainer.clientWidth - 50) {
         direction.dx *= -1; // Reverse X direction
       }
 
@@ -183,7 +183,7 @@ export const prerender = true;
       }
 
       // Update position and direction
-      x = Math.max(0, Math.min(gameContainer.clientWidth - 40, x));
+      x = Math.max(0, Math.min(gameContainer.clientWidth - 50, x));
       y = Math.max(0, Math.min(gameContainer.clientHeight - 60, y));
 
       char.style.left = `${x}px`;
@@ -199,7 +199,7 @@ export const prerender = true;
 
     for (let i = 0; i < characterCount; i++) {
       if (i === luigiIndex) {
-        const luigi = createCharacter("Luigi", "luigi.png", true);
+        const luigi = createCharacter('Luigi', 'luigi.png', true);
         gameContainer.appendChild(luigi);
       } else {
         const randomCharacter =
